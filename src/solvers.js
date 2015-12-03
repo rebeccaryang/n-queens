@@ -47,69 +47,34 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  if(n <= 3){
-    return 0;
+  if(n == 2 || n == 3){
+    var board = new Board({n:n});
+    return board;
   }
-  //create helper function that takes a (board, [i,j])
-  // recursively call helper function while incrementing i and j 
-  var rounds = n;
-  var queensBoard = new Board({n:n});
-  var solution = [];
-  var helperFunc = function(board, coordinate){
-    
+  var solution;
+  var generatePossibilities = function(board,currentRow,queensPlaced){
+    if(queensPlaced == n){
+      solution = JSON.stringify(board.rows());
+      debugger;
+      return;
+    } else if(currentRow >= n){
+      return null;
     }
-  }
-
-generateSuccessQueens(rounds);
-}
-  // var SolutionTree = function(value){
-
-  //   var obj = Object.create(methods);
-  //   obj.value = value;
-  //   obj.children = [];
-  //   return obj;
-  // }
-
-  // var methods = {};
-  // methods.addChild = function(value){
-  //   var child = SolutionTree(value)
-  //   this.children.push(child);
-  // }
-  // var rowsAdded = 0;
-  // // var traverse = function(){
-  // //   if(rowsAdded === n-1){
-  // //     return;
-  // //   }
-  // //   var queensTree = SolutionTree(null);
-  // //   for(var i = rowsAdded; i < n; i++){
-  // //     if(hasAnyQueensConflictsOn(rowsAdded, i){
-  // //       return;
-  // //     }
-  // //     queensTree[i].addChild([0,i]);
-
-  // //   }
-  // //   rowsAdded++;
-  // //   queensTree
-  // methods.traverse = function(value){
-  //   var queensTree = SolutionTree(null);
     
-
-  }
-
-
-
-
-
-  // queensBoard.togglePiece(0,1);
-  // for(var i = 1; i<n;i++){
-  //   for(var j = 0;j<n;j++){
-  //     queensBoard.togglePiece(i,j);
-  //     if(queensBoard.hasAnyQueensConflicts()){
-  //       queensBoard.togglePiece(i,j);
-  //     }
-  //   }
-  // }
-  // var solution = queensBoard.rows();
+    for(var i = 0; i < n; i++){
+      
+      board.togglePiece(currentRow,i); 
+      var isConflict = board.hasAnyQueensConflicts(); // if it has a conflict === true
+      board.togglePiece(currentRow,i);
+      if(isConflict === false){
+        board.togglePiece(currentRow,i);
+        generatePossibilities(board,currentRow+1,queensPlaced+1);
+      }
+    }
+  }  
+  var board = new Board({n:n});
+  generatePossibilities(board,0,0);
+  solution = JSON.parse(solution);
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
 };
