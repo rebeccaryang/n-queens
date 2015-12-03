@@ -79,11 +79,27 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      var currentRow = this.rows()[rowIndex];
+      var counter = 0;
+      for(var i = 0; i < currentRow.length; i++){
+        if(currentRow[i] === 1){
+          counter++;
+        }
+        if(counter > 1){
+          return true;
+          break;
+        }
+      }
+      return false;
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
+      for(var i = 0; i < this._currentAttributes.n; i++){
+        if(this.hasRowConflictAt(i)){
+          return true;
+        };
+      }
       return false; // fixme
     },
 
@@ -94,11 +110,26 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
+      var counter = 0;
+      for(var i = 0; i < this._currentAttributes.n; i++){
+        if(this.rows()[i][colIndex] === 1){
+          counter++;
+        }
+        if(counter > 1){
+          return true;
+          break;
+        }
+      }
       return false; // fixme
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
+      for(var i = 0; i < this._currentAttributes.n; i++){
+        if(this.hasColConflictAt(i)){
+          return true;
+        }
+      }
       return false; // fixme
     },
 
@@ -109,11 +140,41 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
+      var counter = 0;
+      var n = this._currentAttributes.n;
+      var diagonal = majorDiagonalColumnIndexAtFirstRow;
+      if(diagonal < 0){
+        var startingPoint = [-1*diagonal,0]; // [r,c]
+      } else {
+        var startingPoint = [0,diagonal]; // [r,c]
+      }
+
+      var currentSpot = startingPoint; // [r,c] r < n-1 && c < n-1
+      while(currentSpot[0] < n && currentSpot[1] < n){
+        var currentRow = currentSpot[0]
+        var currentCol = currentSpot[1]
+        if(this._currentAttributes[currentRow][currentCol] === 1){
+          counter++;
+        }
+        if(counter > 1){
+          return true;
+        }
+        currentSpot = [currentSpot[0]+1,currentSpot[1]+1]
+      }
       return false; // fixme
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
+      var n = this._currentAttributes.n;
+      var startingPoint = -1*(n-2);
+      var endingPoint = n-2;
+      // while(startingPoint < n-1)
+      for(var i = startingPoint; i<=endingPoint; i++){
+        if(this.hasMajorDiagonalConflictAt(i)){
+          return true;
+        }
+      }
       return false; // fixme
     },
 
@@ -124,11 +185,42 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
+      var counter = 0;
+      var n = this._currentAttributes.n;
+      var diagonal = minorDiagonalColumnIndexAtFirstRow;
+      if(diagonal < n){
+        var startingPoint = [0, diagonal];
+      }else{
+        var startingPoint = [diagonal-n+1, n-1];
+      }
+      var currentSpot = startingPoint;
+      //need to account for 
+      // Rows & columns to never go below 0
+      // Rows & columns never going above the size of the chessboard (n) 
+      while(currentSpot[0] >= 0 && currentSpot[1] >= 0 && currentSpot[0] < n && currentSpot[1] < n){
+        var currentRow = currentSpot[0];
+        var currentCol = currentSpot[1];
+        if(this._currentAttributes[currentRow][currentCol] === 1){
+          counter++;
+        }
+        if(counter > 1){
+          return true;
+        }
+      currentSpot = [currentSpot[0]+1, currentSpot[1]-1]
+      }
       return false; // fixme
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
+      var n = this._currentAttributes.n
+      var startingPoint = 1;
+      var endingPoint = 2*n-3;
+      for(var i = startingPoint; i<=endingPoint;i++){
+        if(this.hasMinorDiagonalConflictAt(i)){
+          return true;
+        }
+      }
       return false; // fixme
     }
 
