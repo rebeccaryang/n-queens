@@ -85,17 +85,37 @@ window.findNQueensSolution = function(n) {
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
   var board = new Board({n:n});
-  var solution = 0;
+  var solutionEven = 0;
+  var solutionMiddle = 0;
   var generatePossibilities = function(board,currentRow,queensPlaced){
-    if(queensPlaced == n){
-      solution++;
+   
+  // If the board is odd 
+   if(n%2===1){ 
+    //If, in the odd board, it's NOT the middle row, add to solutionsEven
+    if(queensPlaced == n && board.rows()[0][Math.floor(n/2)] !== 1){
+      solutionEven++;
       return;
     } 
+    //If, in the odd board, it IS the middle row, add to solution middle (should only happen once)
+    if(queensPlaced == n && board.rows()[0][Math.floor(n/2)] === 1){
+      solutionMiddle++;
+      return;
+    }
+  }
+  //If board is even then add to solutionEvens. 
+  if(n%2 === 0){
+    if(queensPlaced == n){
+      solutionEven++;
+      return;
+    } 
+  }
     else if(currentRow >= n){
       return null;
     }
 
-    for(var i = 0; i < n; i++){
+    var i = currentRow === 0 ? Math.floor(n/2) : 0;
+
+    for(i; i < n; i++){
       board.togglePiece(currentRow,i); 
       var isConflict = board.hasAnyQueensConflicts(); // if it has a conflict === true
       board.togglePiece(currentRow,i);
@@ -105,15 +125,55 @@ window.countNQueensSolutions = function(n) {
         board.togglePiece(currentRow,i);
       }
     }
-  }  
+  }
+    
+  if(n == 0){
+    return 1;
+  }
   if(n == 1){
-    solution = 1;
+    return 1;
   } else if(n == 2 || n == 3){
-    solution = 0;
+    return 0;
   } else {
     generatePossibilities(board,0,0);
   }
 
-  console.log('Number of solutions for ' + n + ' queens:', solution);
-  return solution;
+  console.log('Number of solutions for ' + n + ' queens:', solutionEven*2 + solutionMiddle);
+  return solutionEven*2 + solutionMiddle;
 };
+
+
+// window.countNQueensSolutions = function(n) {
+//   var board = new Board({n:n});
+//   var solution = 0;
+//   var generatePossibilities = function(board,currentRow,queensPlaced){
+//     if(queensPlaced == n){
+//       solution++;
+//       return;
+//     } 
+//     else if(currentRow >= n){
+//       return null;
+//     }
+
+//     for(var i = 0; i < n; i++){
+//       board.togglePiece(currentRow,i); 
+//       var isConflict = board.hasAnyQueensConflicts(); // if it has a conflict === true
+//       board.togglePiece(currentRow,i);
+//       if(isConflict === false && queensPlaced === currentRow){
+//         board.togglePiece(currentRow,i);
+//         generatePossibilities(board,currentRow+1,queensPlaced+1);
+//         board.togglePiece(currentRow,i);
+//       }
+//     }
+//   }  
+//   if(n == 1){
+//     solution = 1;
+//   } else if(n == 2 || n == 3){
+//     solution = 0;
+//   } else {
+//     generatePossibilities(board,0,0);
+//   }
+
+//   console.log('Number of solutions for ' + n + ' queens:', solution);
+//   return solution;
+// };
